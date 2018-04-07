@@ -1,1 +1,1 @@
-# Time-Fighters
+Time Fighters
