@@ -3,38 +3,36 @@
 
 #if defined WIN32
 #include <freeglut.h>
+#include "../windows/SOIL.h"
 #elif defined __APPLE__
 #include <GLUT/glut.h>
+#include <SOIL.h>
 #else
 #include <GL/freeglut.h>
+#include <SOIL.h>
 #endif
 
-#include "RgbImage.h"
-
 class TexRect {
-     float x, xx;
-    float y, yy;
-    float w, ww;
-    float h, hh;
-    GLuint texture_id;
-    GLuint texture_id2; // added for second animation or image 
-    bool triggred; // change animation 
+public:
+    float x;
+    float y;
+    float w;
+    float h;
 
-    int rows;
-    int cols;
-    
-    int curr_row;
-    int curr_col;
-    
+    float rows;
+    float cols;
+    // adding some bools here
+    bool triggered;
+    bool image2_load;
     bool complete;
 
-public:
-    // TexRect (const char*, int, int, int, int, int, int);
-    TexRect(float x, float y, float w, float h);
-    TexRect (const char*, int, int, float, float, float, float);
-    TexRect(const char*,const char*, int, int, float, float, float, float, bool);
+    GLuint texture_id;  // image 1
+    GLuint texture_id2; // image 2
     
-    // TexRect(const char*, int , int , int, int, int, int);
+    // Standdard TextRect 
+    TexRect (const char*, float, float, float, float);
+    // Modified TextRect
+    TexRect (const char*, const char*, float, float, float, float);
 
     void draw();
     
@@ -46,20 +44,18 @@ public:
     void moveRight(float rate=0.01);
     
     void jump();
-    bool done();
-    
-    void advance();
-    
-    void incY();
-    
+    void done();
     void reset();
-    
-    void updateCR(int a, int b);
-   
-    void updateTrigger(bool a);
-   
-    bool rising;
+    void advance();
 
+    void Update1(float, float);
+    void Update2(bool);
+
+    bool rising;
+    bool movingLeft;
+   
+    float xinc;
+    float yinc;
 };
 
 #endif

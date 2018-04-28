@@ -1,104 +1,83 @@
 #include "TexRect.h"
+// #include "Animated"
 
-TexRect::TexRect(float x, float y, float w, float h)
-{
-    this->x = x; this->y = y;
-    this->w = w; this->h = h;
-    xx = x; yy = y; ww = w; hh = h;
-}
-// type int for backgrounds 
-// TexRect::TexRect (const char* filename, int rows, int cols, int x=0, int y=0, int w=0.5, int h=0.5){
-//     glClearColor (0.0, 0.0, 0.0, 0.0);
-//     glShadeModel(GL_FLAT);
-//     glEnable(GL_DEPTH_TEST);
+TexRect::TexRect (const char* filename, float x=0, float y=0, float w=0.5, float h=0.5){
     
-//     RgbImage theTexMap( filename );
-    
-//     glGenTextures( 1, &texture_id );
-//     glBindTexture( GL_TEXTURE_2D, texture_id );
-    
-//     gluBuild2DMipmaps(GL_TEXTURE_2D, 3, theTexMap.GetNumCols(), theTexMap.GetNumRows(),
-//                       GL_RGB, GL_UNSIGNED_BYTE, theTexMap.ImageData() );
-//     this->texture_id = texture_id;
-    
-//     this->rows = (float)rows;
-//     this->cols = (float)cols;
-    
-//     this->x = (float)x;
-//     this->y = (float)y;
-//     this->w = (float)w;
-//     this->h = (float)h;
-    
-//     curr_row = 1;
-//     curr_col = 1;
-    
-//     complete = false;
-// }
-TexRect::TexRect (const char* filename,const char* file2, int rows, int cols, float x=0, float y=0, float w=0.5, float h=0.5, bool boo= false){
     glClearColor (0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
     
-    RgbImage theTexMap( filename );
+    texture_id = SOIL_load_OGL_texture (
+     filename,
+     SOIL_LOAD_AUTO,
+     SOIL_CREATE_NEW_ID,
+     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+     );
     
-    glGenTextures( 1, &texture_id );
-    glBindTexture( GL_TEXTURE_2D, texture_id );
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, theTexMap.GetNumCols(), theTexMap.GetNumRows(),
-                      GL_RGB, GL_UNSIGNED_BYTE, theTexMap.ImageData() );
-    this->texture_id = texture_id;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     
-    //second image
-    RgbImage theTexMap2(file2);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     
-    glGenTextures( 1, &texture_id2 );
-    glBindTexture( GL_TEXTURE_2D, texture_id2 );
-    
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, theTexMap2.GetNumCols(), theTexMap2.GetNumRows(),
-                      GL_RGB, GL_UNSIGNED_BYTE, theTexMap2.ImageData() );
-    this->texture_id2 = texture_id2;
-
-    this->rows = rows;
-    this->cols = cols;
-    
-    triggred = boo; // bool to change if we need to change state
-
     this->x = x;
     this->y = y;
     this->w = w;
     this->h = h;
     
-    curr_row = 1;
-    curr_col = 1;
+    rising = false;
+    movingLeft = true;
     
+    xinc = 0.01;
+    yinc = 0.01;
     complete = false;
+    image2_load = false;
 }
 
-TexRect::TexRect (const char* filename, int rows, int cols, float x=0, float y=0, float w=0.5, float h=0.5){
+TexRect::TexRect(const char* filename, const char* filename2, float x=0, float y=0, float w=0.5, float h=0.5)
+{
     glClearColor (0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
+    // image 1 
+    texture_id = SOIL_load_OGL_texture (
+     filename,
+     SOIL_LOAD_AUTO,
+     SOIL_CREATE_NEW_ID,
+     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+     );
+    // image 2
+    texture_id2 = SOIL_load_OGL_texture (
+     filename2,
+     SOIL_LOAD_AUTO,
+     SOIL_CREATE_NEW_ID,
+     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+     );
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     
-    RgbImage theTex( filename );
-    
-    glGenTextures( 1, &texture_id );
-    glBindTexture( GL_TEXTURE_2D, texture_id );
-    
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, theTex.GetNumCols(), theTex.GetNumRows(),
-                      GL_RGB, GL_UNSIGNED_BYTE, theTex.ImageData() );
-    this->texture_id = texture_id;
-    
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     
     this->x = x;
     this->y = y;
     this->w = w;
     this->h = h;
     
-    rising = true;
+    rising = false;
+    movingLeft = true;
+    
+    // by default these are false
+    image2_load = false;
+    triggered = false;
+    complete = false;
 
+    xinc = 0.01;
+    yinc = 0.01;
 }
-
 
 void TexRect::moveUp(float rate){
     y += rate;
@@ -108,18 +87,35 @@ void TexRect::moveDown(float rate){
 }
 void TexRect::moveLeft(float rate){
     x -= rate;
+    if (x < -0.99){
+        x = -0.99;
+    }
 }
 void TexRect::moveRight(float rate){
     x += rate;
+    if (x + w > 0.99){
+        x = 0.99 - w;
+    }
 }
-
 
 void TexRect::jump(){
     if(rising){
-        y+=0.01;
+        y+=yinc;
+        if (movingLeft){
+            x -=xinc;
+        }
+        else {
+            x +=xinc;
+        }
     }
     else {
-        y-=0.01;
+        y-=yinc;
+        if (movingLeft){
+            x -=xinc;
+        }
+        else{
+            x +=xinc;
+        }
     }
     
     if (y > 0.99){
@@ -128,19 +124,29 @@ void TexRect::jump(){
     if ((y-h) < -0.99){
         rising = true;
     }
+    if (x < -0.99) {
+        movingLeft = false;
+       
+    }
+    if (x+w > 0.99) {
+        movingLeft = true;
+        
+    }
 }
 
 
-
+// need to modify draw
 void TexRect::draw(){
-
-    glBindTexture( GL_TEXTURE_2D, texture_id );
-    glEnable(GL_TEXTURE_2D);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+   
+    if(image2_load)                                     // check which 
+        glBindTexture( GL_TEXTURE_2D, texture_id2 );    // to draw
+    else 
+        glBindTexture( GL_TEXTURE_2D, texture_id );
     
+    glEnable(GL_TEXTURE_2D);
     
     glBegin(GL_QUADS);
-    
+    glColor4f(1, 1, 1, 1);
     glTexCoord2f(0, 0);
     glVertex2f(x, y - h);
     
@@ -156,7 +162,6 @@ void TexRect::draw(){
     glEnd();
     
     glDisable(GL_TEXTURE_2D);
-    
 }
 
 
@@ -164,40 +169,43 @@ bool TexRect::contains(float mx, float my){
     return mx >= x && mx <= x+w && my <= y && my >= y - h;
 }
 
-void TexRect::incY(){
-    y+=0.01;
-}
-
-void TexRect::advance(){
-    if (curr_col < cols){
-        curr_col++;
-    }
-    else {
-        if (curr_row < rows){
-            curr_row++;
-            curr_col = 1;
-        }
-        else{
-            curr_row = 1;
-            curr_col = 1;
-        }
-    }
+void TexRect::advance()
+{
+    // if (curr_col < cols){
+    //     curr_col++;
+    // }
+    // else {
+    //     if (curr_row < rows){
+    //         curr_row++;
+    //         curr_col = 1;
+    //     }
+    //     else{
+    //         curr_row = 1;
+    //         curr_col = 1;
+    //     }
+    // }
     
-    if (curr_row == rows && curr_col == cols){
-        complete = true;
-    }
+    // if (curr_row == rows && curr_col == cols){
+    //     complete = true;
+    // }
 }
 
-void TexRect::reset(){
+void TexRect::reset()
+{
     complete = false;
 }
-void TexRect::updateCR(int a, int b)
+
+// will update state of rows and cols 
+void TexRect::Update1(float a, float b)
 {
-    rows = a; cols = b;
+    this->rows = a; 
+    this->cols = b;
 }
-void TexRect::updateTrigger(bool a)
+
+// this will update imageVSimage2
+void TexRect::Update2(bool a)
 {
-    triggred = a;
-}
+    this->image2_load = a;
+} 
 
 

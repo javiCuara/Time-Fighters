@@ -1,1 +1,2 @@
-App.o: App.cpp App.h GlutApp.h TexRect.h RgbImage.h
+App.o: App.cpp App.h GlutApp.h TexRect.h SOIL/includes/SOIL.h \
+ AnimatedRect.h Game.h PlayerInfo.h

@@ -3,14 +3,13 @@
 
 #include "GlutApp.h"
 #include "TexRect.h"
+#include "AnimatedRect.h"
+#include "Game.h"
 
 class App: public GlutApp {
     // Maintain app state here
     float mx;
     float my;
-    
-    
-
 public:
     // Constructor, to initialize state
     App(const char* label, int x, int y, int w, int h);
@@ -27,7 +26,13 @@ public:
     
     void idle();
     
-    TexRect* painting;
+    TexRect* ball;
+    
+    TexRect* platform;
+    
+    TexRect* background;
+    
+    AnimatedRect* gameOver;
     
     bool up;
     bool down;
@@ -35,9 +40,9 @@ public:
     bool right;
     
     bool moving;
-    
-    TexRect* background;
-    TexRect* space;
+    bool game_over;
+    bool start;
+    Game* Mygame;
 };
 
 #endif

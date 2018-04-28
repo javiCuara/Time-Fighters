@@ -1,28 +1,70 @@
 #include "App.h"
+// #include "Game.h"
 
 static App* singleton;
-
-
-void move(int value){
+// static  Game* Mygame;
+// void altScrene(int a)
+// {
+//     if(a == 1){ 
+//         singleton->Mygame->GameStartScreen(a);
+//         // glutTimerFunc(900,altScrene,2);
+//     }
+//     if (a == 2){ 
+//         singleton->Mygame->GameStartScreen(a);
+//         // glutTimerFunc(900,altScrene,1);
+//     }
+// }
+void app_timer(int value){
+    if (singleton->game_over){
+        singleton->gameOver->advance();
+    }
+    
+    if (singleton->moving){
+        singleton->ball->jump();
+        float bx = singleton->ball->x + singleton->ball->w/2;
+        float by = singleton->ball->y - singleton->ball->h + 0.1;
+        if (singleton->platform->contains(bx, by)){
+            singleton->ball->rising = true;
+            singleton->ball->yinc +=0.005;
+            singleton->ball->xinc = singleton->ball->yinc;
+            if (singleton->ball->yinc > 0.15){
+                singleton->ball->yinc = 0.15;
+            }
+        }
+        
+        if (singleton->ball->y - singleton->ball->h < -0.99){
+            singleton->moving = false;
+            singleton->game_over = true;
+            singleton->gameOver->animate();
+            
+        }
+    }
     if (singleton->up){
-        singleton->painting->moveUp(0.05);
+        singleton->platform->moveUp(0.05);
     }
     if (singleton->down){
-        singleton->painting->moveDown(0.05);
+        singleton->platform->moveDown(0.05);
     }
     if (singleton->left){
-        singleton->painting->moveLeft(0.05);
+        singleton->platform->moveLeft(0.05);
     }
     if (singleton->right){
-        singleton->painting->moveRight(0.05);
+        singleton->platform->moveRight(0.05);
     }
-    if (singleton->up || singleton->down || singleton->left || singleton->right){
+    
+    if (singleton->game_over){
         singleton->redraw();
-        glutTimerFunc(32, move, value);
+        glutTimerFunc(100, app_timer, value);
     }
+    else{
+        if (singleton->up || singleton->down || singleton->left || singleton->right || singleton->moving && !singleton->game_over){
+            singleton->redraw();
+            glutTimerFunc(16, app_timer, value);
+        }
+    }
+    
+    
 }
-
-
 
 App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w, h){
     // Initialize state variables
@@ -31,36 +73,41 @@ App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w,
     mx = 0.0;
     my = 0.0;
     
+    Mygame = new Game();
     
     
-    // space = new TexRect("")
-    painting = new TexRect("fighter.bmp", 6, 6, 0, 0.67, 0.5, 0.5);
+    // background = new TexRect("Textures/TrentchRun.png", -1, 1, 2, 2);
+    ball = new TexRect("Textures/Fighter1.png", 0, 0.67, 0.2, 0.2);
 
+    platform = new TexRect("images/board.png", 0, -0.7, 0.6, 0.2);
+    
+    gameOver = new AnimatedRect("images/game_over.png", 7, 1, -1.0, 0.8, 2, 1.2);
+    
     up = down = left = right = false;
     
-    //explode(0);
-    //glutTimerFunc(20, move, 1);
+    moving = true;
+    game_over = false;
+    start = false;
     
-    moving = false;
+    app_timer(1);
 
 }
 
-
-
 void App::specialKeyPress(int key){
-    if (key == 100){
-        left = true;
+    if (!game_over){
+        if (key == 100){
+            left = true;
+        }
+        if (key == 101){
+            //up = true;
+        }
+        if (key == 102){
+            right = true;
+        }
+        if (key == 103){
+            //down = true;
+        }
     }
-    if (key == 101){
-        up = true;
-    }
-    if (key == 102){
-        right = true;
-    }
-    if (key == 103){
-        down = true;
-    }
-    move(1);
 }
 
 void App::specialKeyUp(int key){
@@ -81,24 +128,20 @@ void App::specialKeyUp(int key){
 void App::draw() {
 
     // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     
     // Set background color to black
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
     
     // Set up the transformations stack
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    // Set Color
-    glColor3d(1.0, 1.0, 1.0);
-    
-    
-    
-    // background->draw();
-    
-    painting->draw();
-    glDisable(GL_TEXTURE_2D);
+    // background->draw();}   
+    Mygame->GameDraw();
+    platform->draw();
+    ball->draw();
+    gameOver->draw();
     
     // We have been drawing everything to the back buffer
     // Swap the buffers to see the result of what we drew
@@ -111,41 +154,46 @@ void App::mouseDown(float x, float y){
     mx = x;
     my = y;
 
-    // Redraw the scene
-   // redraw();
 }
 
 void App::mouseDrag(float x, float y){
     // Update app state
     mx = x;
     my = y;
-    
-    // Redraw the scene
-    //redraw();
+
 }
 
 void App::idle(){
-    if (moving){
-        painting->jump();
-        redraw();
-    }
+
 }
-
-
 
 void App::keyPress(unsigned char key) {
     if (key == 27){
         // Exit the app when Esc key is pressed
         
-        delete background;
-        delete painting;
+        delete ball;
+        delete platform;
+        delete gameOver;
+        // delete background;
+        delete this;
+        // delete Mygame;
         
         exit(0);
     }
-    
-    if (key == ' '){
-        moving = !moving;
+    if(key == ' ')
+    {
+        Mygame->started = true;
+        start = true;
     }
-
-    
+    if (key == 28){
+        ball->x = 0;
+        ball->y = 0.67;
+        ball->yinc = 0.01;
+        ball->xinc = 0.01;
+        ball->rising = false;
+        game_over = false;
+        gameOver->stop();
+        moving = true;
+    }
 }
+
