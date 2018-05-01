@@ -53,9 +53,12 @@ public:
 
     bool rising;
     bool movingLeft;
+
+    float getPose()const;
    
     float xinc;
     float yinc;
+
 };
 
 #endif

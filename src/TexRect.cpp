@@ -134,6 +134,9 @@ void TexRect::jump(){
     }
 }
 
+float TexRect::getPose()const{
+    return x;
+}
 
 // need to modify draw
 void TexRect::draw(){

@@ -5,6 +5,7 @@
 #include "TexRect.h"
 #include "AnimatedRect.h"
 #include "PlayerInfo.h"
+#include "Porjectile.h"
 // player infromation
 class Game{
 public:
