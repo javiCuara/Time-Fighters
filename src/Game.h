@@ -5,7 +5,10 @@
 #include "TexRect.h"
 #include "AnimatedRect.h"
 #include "PlayerInfo.h"
-#include "Porjectile.h"
+// #include "Porjectile.h"
+#include "fighter.h"
+// #include <chrono>
+// #include <thread>
 // player infromation
 class Game{
 public:
@@ -13,18 +16,20 @@ public:
     Info* player;
 
     // Game* saveGame;
-
+    long int clock;
     bool game_over;
     bool paused;
     bool started;
     bool turn;
+    bool shoot;
 
     TexRect* ani1;
     TexRect* ani2;
+
     TexRect* Space;     // background  
-    TexRect* Fighter1;  // standard fighter
-    TexRect* Fighter2;  // upgrade 1
-    TexRect* Fighter3;  // upgrade 2
+    fighter* Fighter;  // standard fighter
+    // TexRect* Fighter2;  // upgrade 1
+    // TexRect* Fighter3;  // upgrade 2
 
     // End screen
     AnimatedRect* End;       
@@ -50,6 +55,8 @@ public:
     void GameStartScreen();
     void scoreTally();
 
+    void Game_Timer(int);
+    void Game_Input(int);
     ~Game(){}
 };
 

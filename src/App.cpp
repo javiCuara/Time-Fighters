@@ -2,70 +2,19 @@
 // #include "Game.h"
 
 static App* singleton;
-// static  Game* Mygame;
-// void altScrene(int a)
-// {
-//     if(a == 1){ 
-//         singleton->Mygame->GameStartScreen(a);
-//         // glutTimerFunc(900,altScrene,2);
-//     }
-//     if (a == 2){ 
-//         singleton->Mygame->GameStartScreen(a);
-//         // glutTimerFunc(900,altScrene,1);
-//     }
-// }
-void app_timer(int value){
-    if (singleton->game_over){
-        singleton->gameOver->advance();
-    }
-    
-    if (singleton->moving){
-        singleton->ball->jump();
-        float bx = singleton->ball->x + singleton->ball->w/2;
-        float by = singleton->ball->y - singleton->ball->h + 0.1;
-        if (singleton->platform->contains(bx, by)){
-            singleton->ball->rising = true;
-            singleton->ball->yinc +=0.005;
-            singleton->ball->xinc = singleton->ball->yinc;
-            if (singleton->ball->yinc > 0.15){
-                singleton->ball->yinc = 0.15;
-            }
-        }
-        
-        if (singleton->ball->y - singleton->ball->h < -0.99){
-            singleton->moving = false;
-            singleton->game_over = true;
-            singleton->gameOver->animate();
-            
-        }
-    }
-    if (singleton->up){
-        singleton->platform->moveUp(0.05);
-    }
-    if (singleton->down){
-        singleton->platform->moveDown(0.05);
-    }
-    if (singleton->left){
-        singleton->platform->moveLeft(0.05);
-    }
-    if (singleton->right){
-        singleton->platform->moveRight(0.05);
-    }
-    
-    if (singleton->game_over){
+
+void timerStart(int val)
+{
+    singleton->value +=val;
+    // singleton->
+    if(!singleton->Mygame->game_over)
+    {
+        singleton->Mygame->GameDraw();
         singleton->redraw();
-        glutTimerFunc(100, app_timer, value);
+        glutTimerFunc(16,timerStart, val);
     }
-    else{
-        if (singleton->up || singleton->down || singleton->left || singleton->right || singleton->moving && !singleton->game_over){
-            singleton->redraw();
-            glutTimerFunc(16, app_timer, value);
-        }
-    }
-    
     
 }
-
 App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w, h){
     // Initialize state variables
     
@@ -75,54 +24,19 @@ App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w,
     
     Mygame = new Game();
     
-    
-    // background = new TexRect("Textures/TrentchRun.png", -1, 1, 2, 2);
-    ball = new TexRect("Textures/Fighter1.png", 0, 0.67, 0.2, 0.2);
-
-    platform = new TexRect("images/board.png", 0, -0.7, 0.6, 0.2);
-    
-    gameOver = new AnimatedRect("images/game_over.png", 7, 1, -1.0, 0.8, 2, 1.2);
-    
-    up = down = left = right = false;
-    
-    moving = true;
-    game_over = false;
-    start = false;
-    
-    app_timer(1);
+    timerStart(1);
 
 }
 
 void App::specialKeyPress(int key){
-    if (!game_over){
-        if (key == 100){
-            left = true;
-        }
-        if (key == 101){
-            //up = true;
-        }
-        if (key == 102){
-            right = true;
-        }
-        if (key == 103){
-            //down = true;
-        }
-    }
+
+  Mygame->Game_Input(key);
 }
 
+/*100=Up Arrow , 101=Left Arrow, 102=Down Arrow, 103=Right Arrow*/
 void App::specialKeyUp(int key){
-    if (key == 100) {
-        left = false;
-    }
-    if (key == 101) {
-        up = false;
-    }
-    if (key == 102) {
-        right = false;
-    }
-    if (key == 103) {
-        down = false;
-    }
+    
+   Mygame->Game_Input(key);
 }
 
 void App::draw() {
@@ -139,12 +53,7 @@ void App::draw() {
     
     // background->draw();}   
     Mygame->GameDraw();
-    platform->draw();
-    ball->draw();
-    gameOver->draw();
-    
-    // We have been drawing everything to the back buffer
-    // Swap the buffers to see the result of what we drew
+   
     glFlush();
     glutSwapBuffers();
 }
@@ -168,32 +77,24 @@ void App::idle(){
 }
 
 void App::keyPress(unsigned char key) {
+    
+    if(Mygame->started)
+    {
+        Mygame->Game_Input(key);
+    }
     if (key == 27){
-        // Exit the app when Esc key is pressed
         
-        delete ball;
-        delete platform;
-        delete gameOver;
-        // delete background;
-        delete this;
-        // delete Mygame;
-        
+        delete this; 
         exit(0);
     }
     if(key == ' ')
     {
         Mygame->started = true;
-        start = true;
+        draw();
+        // start = true;
     }
     if (key == 28){
-        ball->x = 0;
-        ball->y = 0.67;
-        ball->yinc = 0.01;
-        ball->xinc = 0.01;
-        ball->rising = false;
-        game_over = false;
-        gameOver->stop();
-        moving = true;
+       
     }
 }
 

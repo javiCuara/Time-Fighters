@@ -15,6 +15,7 @@ public:
     App(const char* label, int x, int y, int w, int h);
     
     // These are the events we want to handle
+    int value;
     void draw();
     void keyPress(unsigned char key);
     void mouseDown(float x, float y);

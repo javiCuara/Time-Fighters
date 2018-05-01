@@ -13,7 +13,6 @@ PROGRAM = glutapp
 OPTFLAGS =
 CC       = g++
 CFLAGS   = -w $(OPTFLAGS) -ISOIL/includes
-
 ifeq ($(strip $(OS)),Darwin)
 	LDFLAGS = -framework CoreFoundation -framework GLUT -framework OpenGL -LSOIL/lib/macOS -lSOIL
 else
