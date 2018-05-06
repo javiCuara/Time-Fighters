@@ -5,11 +5,9 @@
 #include "TexRect.h"
 #include "AnimatedRect.h"
 #include "PlayerInfo.h"
-// #include "Porjectile.h"
 #include "fighter.h"
-// #include <chrono>
-// #include <thread>
-// player infromation
+#include "Background.h"
+
 class Game{
 public:
 
@@ -17,6 +15,8 @@ public:
 
     // Game* saveGame;
     long int clock;
+    int translate;
+    
     bool game_over;
     bool paused;
     bool started;
@@ -26,18 +26,11 @@ public:
     TexRect* ani1;
     TexRect* ani2;
 
-    TexRect* Space;     // background  
+    Background* Space;     // background  
     fighter* Fighter;  // standard fighter
-    // TexRect* Fighter2;  // upgrade 1
-    // TexRect* Fighter3;  // upgrade 2
 
-    // End screen
     AnimatedRect* End;       
 
-    // Start screen 
-
-    // standard default no need for custom 
-    // setting to load into game
     Game();
 
     // copy constructor 
@@ -57,6 +50,7 @@ public:
 
     void Game_Timer(int);
     void Game_Input(int);
+    void moveBackground(int);
     ~Game(){}
 };
 

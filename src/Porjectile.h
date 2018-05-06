@@ -1,6 +1,7 @@
 #ifndef Projectile_h
 #define Projectile_h
 #include "TexRect.h"
+#include <iostream>
 
 #define MaxBolts 20 // max of 10 on screen projectiles
 
@@ -11,23 +12,35 @@ class bolts:public TexRect{
 public:
     bolts(const char* image, float xx, float yy, float ww, float hh):TexRect(image,xx,yy,ww,hh)
     {
-        // x = xx, y = yy, w = ww, h = hh;
         damage = 1; // deault value 
+        inRange = true;
     }
 
-    // takes parent image pose 
-    // to center the projectile 
     void shoot()
     {
-        moveRight(0.5);
-        draw();
+        if(inRange)
+        {
+            moveRight(0.5);
+            draw();
+        }
+    }
+    int getX()const
+    {
+        return (int)x;
+    }
+    void deleteBolt()
+    {
+        inRange = false;
     }
     void DrawBolt()
     {
-        
-        
+        // std::cout <<"Hello\n";
+        draw();
     }
-
+    ~bolts()
+    {
+        delete this;
+    }
 
 };
 

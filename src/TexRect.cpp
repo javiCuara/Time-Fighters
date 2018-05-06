@@ -25,7 +25,6 @@ TexRect::TexRect (const char* filename, float x=0, float y=0, float w=0.5, float
     this->y = y;
     this->w = w;
     this->h = h;
-    
     rising = false;
     movingLeft = true;
     
@@ -33,6 +32,7 @@ TexRect::TexRect (const char* filename, float x=0, float y=0, float w=0.5, float
     yinc = 0.01;
     complete = false;
     image2_load = false;
+    triggered = false;
 }
 
 TexRect::TexRect(const char* filename, const char* filename2, float x=0, float y=0, float w=0.5, float h=0.5)
@@ -140,14 +140,13 @@ float TexRect::getPose()const{
 
 // need to modify draw
 void TexRect::draw(){
-   
     if(image2_load)                                     // check which 
         glBindTexture( GL_TEXTURE_2D, texture_id2 );    // to draw
     else 
         glBindTexture( GL_TEXTURE_2D, texture_id );
     
     glEnable(GL_TEXTURE_2D);
-    
+ 
     glBegin(GL_QUADS);
     glColor4f(1, 1, 1, 1);
     glTexCoord2f(0, 0);
@@ -174,23 +173,7 @@ bool TexRect::contains(float mx, float my){
 
 void TexRect::advance()
 {
-    // if (curr_col < cols){
-    //     curr_col++;
-    // }
-    // else {
-    //     if (curr_row < rows){
-    //         curr_row++;
-    //         curr_col = 1;
-    //     }
-    //     else{
-    //         curr_row = 1;
-    //         curr_col = 1;
-    //     }
-    // }
     
-    // if (curr_row == rows && curr_col == cols){
-    //     complete = true;
-    // }
 }
 
 void TexRect::reset()
@@ -209,6 +192,16 @@ void TexRect::Update1(float a, float b)
 void TexRect::Update2(bool a)
 {
     this->image2_load = a;
-} 
-
-
+}
+void TexRect::newH(float val)
+{
+    h = val;
+}
+void TexRect::newW(float val)
+{
+    w = val;
+}
+TexRect::~TexRect()
+{
+    // delete this;
+}

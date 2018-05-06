@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE);
     
     // Instantiate a new App
-    App* myApp = new App("MyApp", 50, 50, 1690, 890);
+    App* myApp = new App("MyApp", 50, 50, 1690, 870);
 
 	// Start the app
     myApp->run();

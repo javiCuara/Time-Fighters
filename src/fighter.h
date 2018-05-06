@@ -13,8 +13,9 @@ class fighter: TexRect{
     bool hits;
     bool shot; 
     int max = 10;
-     
+    //some compatability stuff
 public:
+
     float moveSpeed;
     std::vector<bolts*> cannon;
     fighter(const char* name,float x =0.0, float y =0.0, float w =.5, float h =0.5):TexRect(name,x,y,w,h)
@@ -62,12 +63,17 @@ public:
             case(32):{
                 if(cannon.size() != max)
                 {
-                cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y,0.2,0.2));
-                shot = true;
+                    #if defined WIN32
+                        cannon.push_back(new bolts("..\\Textures\\RedBlaster2.png",x,y,0.2,0.2));
+                    #else 
+                        cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y,0.2,0.2));
+                    #endif 
+                    // deleteCannon(); 
+                    shot = true;
                 }
                 else
                 {
-                    // we need to delete any that reached boundry 
+                    deleteCannon(); 
 
                 }
                 break;
@@ -76,9 +82,26 @@ public:
                 break;
             }
         }
-        // return false;
     }
     // if ship upgrade availabe then update the skin
+    void deleteCannon()
+    {
+        // std::cout<<"deleting check ...\n";
+        if(cannon.size() > 0)
+        {
+            // std::cout<<"deleting check 1 ...\n";
+            for(int i =0; i < cannon.size(); i++)
+            {   
+                // std::cout<<"This is the pose" << cannon[i]->getPose() << " ...\n";
+                if(cannon[i]->getPose() >= 0.79)
+                {
+                    // std::cout<<"deleting check 2 ...\n";
+                    cannon.erase(cannon.begin() + i);
+                    break;
+                }
+            }
+        }
+    }
     void newFighter()
     {
         switch (cur_fighter){

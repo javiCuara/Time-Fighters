@@ -55,10 +55,14 @@ public:
     bool movingLeft;
 
     float getPose()const;
-   
+    
+    void  newW(float);
+    void  newH(float);
+
     float xinc;
     float yinc;
 
+    ~TexRect();
 };
 
 #endif
