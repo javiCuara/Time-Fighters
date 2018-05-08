@@ -59,7 +59,7 @@ public:
     void Game_Timer(int);
     void Game_Input(int);
     void moveBackground(int);
-    void DrawTies();
+    void DrawBadies();
     void updateTies();
     void updateBill();
     void checkCrits(int);

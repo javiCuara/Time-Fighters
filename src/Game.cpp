@@ -54,7 +54,7 @@
             // End->draw();
             
             // draw enemy fighters 
-            DrawTies();
+            DrawBadies();
             if(Fighter->cannon.size() > 0)
             {
                 for(int i = 0; i < Fighter->cannon.size(); i++)
@@ -71,33 +71,33 @@
 
         clock++;
     }
-    void Game::DrawTies()
+    void Game::DrawBadies()
     {
         // we need to generate random starting pose for the tie fighter 
         if(clock % 161 == 0 && Ties.size() != 10)
         {
             #if defined WIN32
                 if(clock % 2 == 0)
-                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79,Fighter->getY(), 0.2, 0.3));
+                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, -.8*Fighter->getY(), 0.2, 0.3));
                 else 
-                    Ties.push_back(new fighter("..\\Textures\\OGTieFighter.png", .79, Fighter->getY(), 0.2, 0.3));
+                    Ties.push_back(new fighter("..\\Textures\\OGTieFighter.png", .79,Fighter->getY(), 0.2, 0.3));
             #else 
                 if(clock % 2 == 0)
                     Ties.push_back(new fighter("Textures/Tie1.png", .79, -.8*Fighter->getY(), 0.2, 0.3));
                 else 
-                    Ties.push_back(new fighter("Textures/OGTieFighter.png", .79,.8* Fighter->getY(), 0.2, 0.3));
+                    Ties.push_back(new fighter("Textures/OGTieFighter.png", .79,Fighter->getY(), 0.2, 0.3));
             #endif
         }
         else if( clock % 231 == 0 && Ties.size() != 10)
         {
             #if defined WIN32
                 if(clock % 2 == 0)
-                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
+                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
                 else 
                     Ties.push_back(new fighter("..\\Textures\\OGTieFighter.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
             #else 
-                if(clock % 2 == 0)
-                    Ties.push_back(new fighter("Textures/Tie1.png", .79, -.6 * Fighter->getY(), 0.2, 0.3));
+                if(clock % 3 == 0)
+                    Ties.push_back(new fighter("Textures/Tie1.png", .79,  Fighter->getY(), 0.2, 0.3));
                 else 
                     Ties.push_back(new fighter("Textures/OGTieFighter.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
             #endif 
@@ -105,7 +105,7 @@
         else if(clock % 251 == 0 && bill.size() != 3)
         {
             #if defined WIN32
-                bill.push_back(new fighter("..\\Textures\\Bill.png", .79,Fighter->getY(), 0.3, 0.3));
+                bill.push_back(new fighter("..\\Textures\\Bill.png", .79,Fighter->getY(), 0.2, 0.2));
             #else 
                 bill.push_back(new fighter("Textures/Bill.png", .79,Fighter->getY(), 0.2, 0.2));
            #endif
