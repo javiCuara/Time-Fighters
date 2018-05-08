@@ -33,8 +33,12 @@ public:
     }
     void moveenemy(float rate = 0.002)
     {
-         moveLeft(0.002);
-         draw();
+		const char* a = "Textures/OGTieFighter.png";
+		if (a == Fighter1)
+		    moveLeft(0.005);
+		else
+			moveLeft(0.002);
+        draw();
     }
     void drawBolt()
     {
@@ -139,9 +143,23 @@ public:
             }
         }
     }
+
+	void upgradeFighter(int upgrade) {
+		Fighter2 = "Textures/Fighter/GoldFighter.png";
+		if (upgrade == 1) {
+			advance();
+			max = 20;
+		}
+	}
+
     bool myContains(float x, float y)
     {
         return contains(x,y);
+    }
+
+	bool playerContains(float x, float y)
+    {
+        return containsPlayer(x,y);
     }
     
     float getY()

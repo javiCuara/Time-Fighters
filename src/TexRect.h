@@ -37,6 +37,7 @@ public:
     void draw();
     
     bool contains(float, float);
+    bool containsPlayer(float, float);
     
     void moveUp(float rate=0.01);
     void moveDown(float rate=0.01);

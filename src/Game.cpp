@@ -8,12 +8,14 @@
             ani1 = new TexRect("..\\Textures\\start2.png",-1,1,2,2);
             ani2 = new TexRect("..\\Textures\\Start1.png",-1,1,2,2);
             Fighter = new fighter("..\\Textures\\Fighter1.png", 0, 0.67, 0.2, 0.2);
+	    	Score = new score("..\\Textures\\ScoreLabel.png", -1, 1, 0.2, 0.05);
             
         #else
             Space = new Background("Textures/TrentchRun.png",-1.0, 1.0, 2, 2);
             ani1 = new TexRect("Textures/start2.png",-1,1,2,2);
             ani2 = new TexRect("Textures/Start1.png",-1,1,2,2);
             Fighter = new fighter("Textures/Fighter1.png", -.7, 0.67, 0.2, 0.3);
+	    	Score = new score("Textures/ScoreLabel.png", -1, 1, 0.2, 0.05);
     
         #endif
         
@@ -31,7 +33,11 @@
     // for loading checkpoints
     Game::Game(const Game& prev){}
 
-    void Game::upgradeShip(){}
+    void Game::upgradeShip(){
+		if (player->returnScore() >= 100) {
+			Fighter->upgradeFighter(1);
+		}
+	}
     void Game::Paused(){}
     void Game::Checkpoint(){}
     
@@ -48,26 +54,35 @@
         }
         else if(!game_over)
         {
-            // draw what is on screen
-            Space->Render();
-            Fighter->drawFihter();
-            // End->draw();
-            
-            // draw enemy fighters 
-            DrawBadies();
-            if(Fighter->cannon.size() > 0)
-            {
-                for(int i = 0; i < Fighter->cannon.size(); i++)
-                {
-                    Fighter->deleteCannon();
-                    Fighter->cannon[i]->moveRight(0.02);
-                }
-                for(int i = 0; i < Fighter->cannon.size(); i++)
-                {
-                    Fighter->cannon[i]->draw();
-                }
-            }
-        }
+			if (paused) {
+				Space->Render();
+				Score->displayScore();
+				Score->updateScore(getScore());
+			}
+			else if (!paused) {
+				// draw what is on screen
+				Space->Render();
+				Fighter->drawFihter();
+				Score->displayScore();
+				Score->updateScore(getScore());
+				// End->draw();
+			
+				// draw enemy fighters 
+				DrawBadies();
+				if(Fighter->cannon.size() > 0)
+				{
+					for(int i = 0; i < Fighter->cannon.size(); i++)
+					{
+					    Fighter->deleteCannon();
+					    Fighter->cannon[i]->moveRight(0.02);
+					}
+					for(int i = 0; i < Fighter->cannon.size(); i++)
+					{
+					    Fighter->cannon[i]->draw();
+					}
+				}
+		    }
+		}
 
         clock++;
     }
@@ -102,7 +117,7 @@
                     Ties.push_back(new fighter("Textures/OGTieFighter.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
             #endif 
         }
-        else if(clock % 251 == 0 && bill.size() != 3)
+        else if(clock % 331 == 0 && bill.size() != 3)
         {
             #if defined WIN32
                 bill.push_back(new fighter("..\\Textures\\Bill.png", .79,Fighter->getY(), 0.2, 0.2));
@@ -137,7 +152,7 @@
     }
     void Game::FighterDamage(fighter* tmp)
     {
-        if(Fighter->myContains(tmp->getX(), tmp->getY()))
+        if(Fighter->playerContains(tmp->getX(), tmp->getY()))
         {
           game_over = true;
             
@@ -188,6 +203,8 @@
                 // we need to delete the tie and the bolt
                 Ties.erase(Ties.begin()+index);
                 Fighter->cannon.erase(Fighter->cannon.begin() + i);
+		player->IncScore(5);
+				upgradeShip();
                 break;
             }
         }
@@ -209,7 +226,6 @@
     }
     void Game::GameStartScreen()
     {
-        
             ani1->draw();
     }
     void Game::Game_Timer(int val)
@@ -221,10 +237,19 @@
     void Game::Game_Input(int val)
     {
         if(!game_over)
-        {
-            Fighter->updateFighter(val);
-            moveBackground(val);
-            GameDraw();
-            
+		{
+	    	if (val == 13)
+			{
+				if (!paused)
+					paused = true;
+				else
+					paused = false;
+					GameDraw();
+			}
+			if (!paused) {
+		            Fighter->updateFighter(val);
+		            moveBackground(val);
+		            GameDraw();
+			}
         }
     }

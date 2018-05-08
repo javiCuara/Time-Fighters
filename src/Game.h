@@ -7,6 +7,7 @@
 #include "PlayerInfo.h"
 #include "fighter.h"
 #include "Background.h"
+#include "score.h"
 #include <vector>
 
 class Game{
@@ -36,6 +37,8 @@ public:
 
     Background* Space;     // background  
     fighter* Fighter;  // standard fighter
+
+    score* Score;    //score graphic
 
     AnimatedRect* End;       
 
