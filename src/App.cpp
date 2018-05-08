@@ -24,7 +24,7 @@ void timerStart(int val)
     }
     if (singleton->Mygame->game_over){
         singleton->redraw();
-        glutTimerFunc(300, timerStart, val);
+        glutTimerFunc(205, timerStart, val);
     }
     
 }
@@ -40,6 +40,7 @@ App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w,
         gameOver= new AnimatedRect("..\\Textures\\AlderonExplosion.png", 4, 4,-1, 1, 2, 2);
     #else
         gameOver= new AnimatedRect("Textures/AlderonExplosion.png", 4, 4,-1, 1, 2, 2);
+        
     #endif
     
     timerStart(1);

@@ -4,7 +4,7 @@
 
         // some compatability stuff
         #if defined WIN32
-            Space = new Background("..\\Textures\\rentchRun.png",-1, 1, 2, 2);
+            Space = new Background("..\\Textures\\TrentchRun.png",-1, 1, 2, 2);
             ani1 = new TexRect("..\\Textures\\start2.png",-1,1,2,2);
             ani2 = new TexRect("..\\Textures\\Start1.png",-1,1,2,2);
             Fighter = new fighter("..\\Textures\\Fighter1.png", 0, 0.67, 0.2, 0.2);
