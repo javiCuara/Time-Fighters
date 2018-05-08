@@ -19,9 +19,7 @@
         
         player = new Info();
         Current = this;
-        game_over = false;
-	starpower = false;
-	trigunpower = false;
+        game_over = false;;
         started = false;
         paused = false;
         animation = false;
@@ -33,7 +31,9 @@
     // for loading checkpoints
     Game::Game(const Game& prev){}
 
-    void Game::upgradeShip(){}
+    void Game::upgradeShip(){
+      
+    }
     void Game::Paused(){}
     void Game::Checkpoint(){}
     
@@ -57,7 +57,6 @@
             
             // draw enemy fighters 
             DrawBadies();
-	    DrawPowerup();
             if(Fighter->cannon.size() > 0)
             {
                 for(int i = 0; i < Fighter->cannon.size(); i++)
@@ -108,82 +107,15 @@
         else if(clock % 251 == 0 && bill.size() != 3)
         {
             #if defined WIN32
-                bill.push_back(new fighter("..\\Textures\\Bill.png", .79,-.8*Fighter->getY(), 0.2, 0.2));
+                bill.push_back(new fighter("..\\Textures\\Bill.png", .79,Fighter->getY(), 0.2, 0.2));
             #else 
                 bill.push_back(new fighter("Textures/Bill.png", .79,Fighter->getY(), 0.2, 0.2));
            #endif
         }
-	
-	
         updateTies();
         updateBill();
         //  move them now on the screen 
     }
-    void Game::DrawPowerup()//new
-    {
-	if(clock % 10000 == 0 && star.size() != 5)
-	{
-	    #if defined WIN32
-                star.push_back(new fighter("..\\Textures\\star1.png", .79,Fighter->getY(), 0.1, 0.2));
-            #else 
-                star.push_back(new fighter("Textures/star1.png", .79,Fighter->getY(), 0.1, 0.2));
-           #endif
-	}
-	else if(clock % 3000 == 0 && trigun.size() != 5)
-	{
-	    #if defined WIN32
-                trigun.push_back(new fighter("..\\Textures\\trigun1.png", .79,Fighter->getY(), 0.1, 0.2));
-            #else 
-                trigun.push_back(new fighter("Textures/trigun1.png", .79,Fighter->getY(), 0.1, 0.2));
-           #endif
-	}
-
-	updateStar();
-	updateTrigun();
-    }
-    void Game::updateStar()//new
-    {
-        for(int i = 0; i < star.size(); i++)
-        {
-            star[i]->moveenemy(0.8);
-        }
-        if(star.size() > 0)
-        {
-            for(int i =0; i < star.size(); i++)
-            {
-                if(star[i]->getX() <= -.9)
-                {
-                    star.erase(star.begin()+i);
-                }
-                else
-                {
-                    FighterStar(star[i], i);
-                }
-            }
-        }
-    }
-    void Game::updateTrigun()//new
-    {
-        for(int i = 0; i < trigun.size(); i++)
-        {
-            trigun[i]->moveenemy(0.8);
-        }
-        if(trigun.size() > 0)
-        {
-            for(int i =0; i < trigun.size(); i++)
-            {
-                if(trigun[i]->getX() <= -.9)
-                {
-                    trigun.erase(trigun.begin()+i);
-                }
-                else
-                {
-                    FighterTrigun(trigun[i], i);
-                }
-            }
-        }
-    }
-
     void Game::updateBill()
     {
         for(int i = 0; i < bill.size(); i++)
@@ -198,39 +130,21 @@
                 {
                     bill.erase(bill.begin()+i);
                 }
-                else if(!starpower)
+                else
                 {
                     FighterDamage(bill[i]);
                 }
             }
         }
     }
-    
     void Game::FighterDamage(fighter* tmp)
     {
         if(Fighter->myContains(tmp->getX(), tmp->getY()))
         {
-          game_over = true;  
+          game_over = true;
+            
         }
     }
-    void Game::FighterStar(fighter* tmp, int index)//new
-    {
-	if(Fighter->myContains(tmp->getX(), tmp->getY()))
-	{
-          star.erase(star.begin()+ index);
-	  starpower = true;
-	}
-    }
-    void Game::FighterTrigun(fighter* tmp, int index)//new
-    {
-	if(Fighter->myContains(tmp->getX(), tmp->getY()))
-	{
-          trigun.erase(trigun.begin()+ index);
-	  trigunpower = true;
-	  Fighter->trigun = true;
-	}
-    }
-
     void Game::updateTies()
     {
         // we need to also check if we need to delete them from the map 

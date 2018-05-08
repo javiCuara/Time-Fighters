@@ -12,7 +12,7 @@ enum Boosters{
 
 struct Info{
 public:
-    int score, lives, t;
+    int score, lives ,t;
     bool power;
     int boostId;
 

@@ -175,18 +175,9 @@ bool TexRect::contains(float mx, float my){
     return mx >= x && mx <= x+w && my <= y && my >= y - h;
 }
 
-bool TexRect::containsPlayer(float mx, float my){
-    return mx >= x+0.025 && mx <= x+w-0.025 && my <= y+0.025 && my >= y - h - 0.025;
-}
-
 void TexRect::advance()
 {
-    texture_id = SOIL_load_OGL_texture (
-     "Textures/Fighter/GoldFighter.png",
-     SOIL_LOAD_AUTO,
-     SOIL_CREATE_NEW_ID,
-     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-     );
+    
 }
 
 void TexRect::reset()

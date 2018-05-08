@@ -2,6 +2,7 @@
 #define fighter_h
 #include "TexRect.h"
 #include "Porjectile.h"
+#include "Game.h"
 #include <vector>
 
 class fighter: TexRect{
@@ -13,9 +14,11 @@ class fighter: TexRect{
     bool hits;
     bool shot; 
     int max = 10;
+   
     //some compatability stuff
 public:
-
+    int counter = 0;
+    bool trigun = false;
     float moveSpeed;
     std::vector<bolts*> cannon;
     fighter(const char* name,float x =0.0, float y =0.0, float w =.5, float h =0.5):TexRect(name,x,y,w,h)
@@ -33,12 +36,8 @@ public:
     }
     void moveenemy(float rate = 0.002)
     {
-		const char* a = "Textures/OGTieFighter.png";
-		if (a == Fighter1)
-		    moveLeft(0.005);
-		else
-			moveLeft(0.002);
-        draw();
+         moveLeft(0.002);
+         draw();
     }
     void drawBolt()
     {
@@ -84,26 +83,43 @@ public:
             }
             // shooting
             case(32):{
-                if(cannon.size() != max)
-                {
-                    #if defined WIN32
-                        cannon.push_back(new bolts("..\\Textures\\RedBlaster2.png",x,y,0.2,0.2));
-                    #else 
-                        cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y,0.2,0.2));
-                    #endif 
-                    // deleteCannon(); 
-                    shot = true;
-                }
-                else
-                {
-                    deleteCannon(); 
+		
+				if(cannon.size() != max)
+				{
+				    
+				        
+				  	if(trigun)
+					{
+						if(counter != 10)
+						{
+							 cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y-0.05,0.2,0.2));
+							 cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y+0.4,0.2,0.2));
+							 cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y-0.4,0.2,0.2));
+							 counter ++;
+						}
+						else
+						{
+							trigun = false;
+							counter = 0;
+						}
+					}
+					else
+						 cannon.push_back(new bolts("Textures/RedBlaster2.png",x,y-0.05,0.2,0.2));
+				    // deleteCannon(); 
+				    shot = true;
+				}
+				else
+				{
+				    deleteCannon(); 
 
-                }
-                break;
-            }
-            default:{
-                break;
-            }
+				}
+				break;
+			    }
+			    default:{
+				break;
+			    }
+	
+		
         }
     }
     // if ship upgrade availabe then update the skin
@@ -143,23 +159,9 @@ public:
             }
         }
     }
-
-	void upgradeFighter(int upgrade) {
-		Fighter2 = "Textures/Fighter/GoldFighter.png";
-		if (upgrade == 1) {
-			advance();
-			max = 20;
-		}
-	}
-
     bool myContains(float x, float y)
     {
         return contains(x,y);
-    }
-
-	bool playerContains(float x, float y)
-    {
-        return containsPlayer(x,y);
     }
     
     float getY()
