@@ -31,7 +31,7 @@ public:
         if(!hits)
             draw();
     }
-    void moveenemy()
+    void moveenemy(float rate = 0.002)
     {
          moveLeft(0.002);
          draw();

@@ -19,12 +19,18 @@ public:
     int translate;
     
     bool game_over;
+    bool animation;
     bool paused;
     bool started;
     bool turn;
     bool shoot;
 
     std::vector<fighter*> Ties;
+    
+    // Bullet Bills cannot be destroyed 
+    // They do the destroying so avoid them at all costs
+    std::vector<fighter*> bill;
+
     TexRect* ani1;
     TexRect* ani2;
 
@@ -55,7 +61,9 @@ public:
     void moveBackground(int);
     void DrawTies();
     void updateTies();
+    void updateBill();
     void checkCrits(int);
+    void FighterDamage(fighter* tmp);
     ~Game(){}
 };
 

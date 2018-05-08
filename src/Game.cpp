@@ -8,11 +8,13 @@
             ani1 = new TexRect("..\\Textures\\start2.png",-1,1,2,2);
             ani2 = new TexRect("..\\Textures\\Start1.png",-1,1,2,2);
             Fighter = new fighter("..\\Textures\\Fighter1.png", 0, 0.67, 0.2, 0.2);
+            
         #else
             Space = new Background("Textures/TrentchRun.png",-1.0, 1.0, 2, 2);
             ani1 = new TexRect("Textures/start2.png",-1,1,2,2);
             ani2 = new TexRect("Textures/Start1.png",-1,1,2,2);
             Fighter = new fighter("Textures/Fighter1.png", -.7, 0.67, 0.2, 0.3);
+    
         #endif
         
         player = new Info();
@@ -20,6 +22,7 @@
         game_over = false;;
         started = false;
         paused = false;
+        animation = false;
         turn = false;
         Space->triggered = true;
     }
@@ -43,11 +46,12 @@
         {
             Game_Timer(clock);
         }
-        else 
+        else if(!game_over)
         {
             // draw what is on screen
             Space->Render();
             Fighter->drawFihter();
+            // End->draw();
             
             // draw enemy fighters 
             DrawTies();
@@ -64,29 +68,80 @@
                 }
             }
         }
+
         clock++;
     }
     void Game::DrawTies()
     {
         // we need to generate random starting pose for the tie fighter 
-        if(clock % 91 == 0 && Ties.size() != 10)
+        if(clock % 161 == 0 && Ties.size() != 10)
         {
             #if defined WIN32
-                Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+                if(clock % 2 == 0)
+                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79,Fighter->getY(), 0.2, 0.3));
+                else 
+                    Ties.push_back(new fighter("..\\Textures\\OGTieFighter.png", .79, Fighter->getY(), 0.2, 0.3));
             #else 
-                Ties.push_back(new fighter("Textures/Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+                if(clock % 2 == 0)
+                    Ties.push_back(new fighter("Textures/Tie1.png", .79, -.8*Fighter->getY(), 0.2, 0.3));
+                else 
+                    Ties.push_back(new fighter("Textures/OGTieFighter.png", .79,.8* Fighter->getY(), 0.2, 0.3));
             #endif
         }
-        else if( clock % 101 == 0 && Ties.size() != 10)
+        else if( clock % 231 == 0 && Ties.size() != 10)
         {
             #if defined WIN32
-                Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+                if(clock % 2 == 0)
+                    Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
+                else 
+                    Ties.push_back(new fighter("..\\Textures\\OGTieFighter.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
             #else 
-                Ties.push_back(new fighter("Textures/Tie1.png", .79, -1 * Fighter->getY(), 0.2, 0.3));
+                if(clock % 2 == 0)
+                    Ties.push_back(new fighter("Textures/Tie1.png", .79, -.6 * Fighter->getY(), 0.2, 0.3));
+                else 
+                    Ties.push_back(new fighter("Textures/OGTieFighter.png", .79, -.8 * Fighter->getY(), 0.2, 0.3));
             #endif 
         }
+        else if(clock % 251 == 0 && bill.size() != 3)
+        {
+            #if defined WIN32
+                bill.push_back(new fighter("..\\Textures\\Bill.png", .79,Fighter->getY(), 0.3, 0.3));
+            #else 
+                bill.push_back(new fighter("Textures/Bill.png", .79,Fighter->getY(), 0.2, 0.2));
+           #endif
+        }
         updateTies();
+        updateBill();
         //  move them now on the screen 
+    }
+    void Game::updateBill()
+    {
+        for(int i = 0; i < bill.size(); i++)
+        {
+            bill[i]->moveenemy(0.8);
+        }
+        if(bill.size() > 0)
+        {
+            for(int i =0; i < bill.size(); i++)
+            {
+                if(bill[i]->getX() <= -.9)
+                {
+                    bill.erase(bill.begin()+i);
+                }
+                else
+                {
+                    FighterDamage(bill[i]);
+                }
+            }
+        }
+    }
+    void Game::FighterDamage(fighter* tmp)
+    {
+        if(Fighter->myContains(tmp->getX(), tmp->getY()))
+        {
+          game_over = true;
+            
+        }
     }
     void Game::updateTies()
     {
@@ -94,7 +149,19 @@
         // as weell as detect any hits to delete them 
         for(int i = 0; i < Ties.size(); i++)
         {
-            Ties[i]->moveenemy();
+            if(clock % 15 == 0)
+            {
+                Ties[i]->moveenemy();
+            }
+            else if (clock % 21 == 0 )
+            {
+                Ties[i]->moveenemy(0.5);
+            }
+            else
+            {
+                FighterDamage(Ties[i]);
+                Ties[i]->moveenemy(0.005);
+            }
         }
         if(Ties.size() > 0)
         {
@@ -142,25 +209,14 @@
     }
     void Game::GameStartScreen()
     {
-        if (clock %11 == 0)
-        {
+        
             ani1->draw();
-        }
-        else
-        {
-            ani2->draw();
-        }
     }
     void Game::Game_Timer(int val)
     {
         clock++;
-        if(clock%17 == 0 && !started)
-        {   
-            GameStartScreen();
-        }
-        else{
-            GameStartScreen();
-        }
+        GameStartScreen();
+        
     }
     void Game::Game_Input(int val)
     {

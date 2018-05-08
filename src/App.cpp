@@ -13,6 +13,19 @@ void timerStart(int val)
         singleton->redraw();
         glutTimerFunc(16,timerStart, val);
     }
+    if(singleton->Mygame->game_over && ! singleton->start)
+    {
+        singleton->gameOver->animate();
+        singleton->start = true;
+    }
+    if(singleton->Mygame->game_over)
+    {
+        singleton->gameOver->advance();
+    }
+    if (singleton->Mygame->game_over){
+        singleton->redraw();
+        glutTimerFunc(300, timerStart, val);
+    }
     
 }
 App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w, h){
@@ -23,6 +36,11 @@ App::App(const char* label, int x, int y, int w, int h): GlutApp(label, x, y, w,
     my = 0.0;
     
     Mygame = new Game();
+    #if defined WIN32
+        gameOver= new AnimatedRect("..\\Textures\\AlderonExplosion.png", 4, 4,-1, 1, 2, 2);
+    #else
+        gameOver= new AnimatedRect("Textures/AlderonExplosion.png", 4, 4,-1, 1, 2, 2);
+    #endif
     
     timerStart(1);
 
@@ -53,7 +71,7 @@ void App::draw() {
     
     // background->draw();}   
     Mygame->GameDraw();
-   
+    gameOver->draw();
     glFlush();
     glutSwapBuffers();
 }
