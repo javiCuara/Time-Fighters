@@ -28,6 +28,14 @@ public:
     {
         return (int)x;
     }
+    float get_myX()
+    {
+        return getPose();
+    }
+    float get_myY()
+    {
+        return get_yPose();
+    }
     void deleteBolt()
     {
         inRange = false;

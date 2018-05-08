@@ -9,10 +9,10 @@
             ani2 = new TexRect("..\\Textures\\Start1.png",-1,1,2,2);
             Fighter = new fighter("..\\Textures\\Fighter1.png", 0, 0.67, 0.2, 0.2);
         #else
-            Space = new Background("Textures/TrentchRun.png",-1, 1, 2, 2);
+            Space = new Background("Textures/TrentchRun.png",-1.0, 1.0, 2, 2);
             ani1 = new TexRect("Textures/start2.png",-1,1,2,2);
             ani2 = new TexRect("Textures/Start1.png",-1,1,2,2);
-            Fighter = new fighter("Textures/Fighter1.png", 0, 0.67, 0.2, 0.2);
+            Fighter = new fighter("Textures/Fighter1.png", -.7, 0.67, 0.2, 0.3);
         #endif
         
         player = new Info();
@@ -48,13 +48,15 @@
             // draw what is on screen
             Space->Render();
             Fighter->drawFihter();
-            // moveBackground();
+            
+            // draw enemy fighters 
+            DrawTies();
             if(Fighter->cannon.size() > 0)
             {
                 for(int i = 0; i < Fighter->cannon.size(); i++)
                 {
                     Fighter->deleteCannon();
-                    Fighter->cannon[i]->moveRight(0.002);
+                    Fighter->cannon[i]->moveRight(0.02);
                 }
                 for(int i = 0; i < Fighter->cannon.size(); i++)
                 {
@@ -63,18 +65,61 @@
             }
         }
     }
+    void Game::DrawTies()
+    {
+        // we need to generate random starting pose for the tie fighter 
+
+        if(Ties.size() != 10)
+        {
+            #if defined WIN32
+                Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+            #else 
+                Ties.push_back(new fighter("Textures/Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+            #endif 
+        }
+        updateTies();
+        //  move them now on the screen 
+    }
+    void Game::updateTies()
+    {
+        // we need to also check if we need to delete them from the map 
+        // as weell as detect any hits to delete them 
+        for(int i = 0; i < Ties.size(); i++)
+        {
+            Ties[i]->moveenemy();
+        }
+        if(Ties.size() > 0)
+        {
+            for(int i =0; i < Ties.size(); i++)
+            {
+                if(Ties[i]->getX() <= -.9)
+                {
+                    Ties.erase(Ties.begin()+i);
+                }
+                if(Fighter->cannon.size() >0)
+                {
+                    checkCrits(i);
+                }
+            }
+        }
+
+    }
+    void Game::checkCrits(int index)
+    {
+        for(int i = 0; i < Fighter->cannon.size(); i ++)
+        {
+            if(Ties[index]->myContains(Fighter->cannon[i]->get_myX(),Fighter->cannon[i]->get_myY()))
+            {
+                // we need to delete the tie and the bolt
+                Ties.erase(Ties.begin()+index);
+                Fighter->cannon.erase(Fighter->cannon.begin() + i);
+                break;
+            }
+        }
+    }
     void Game::moveBackground(int val)
     {
-        // if(val == 100)
-        // {
-        //     // move left
-        //     Space->updateMove(1);
-        // }
-        // if(val == 102)
-        // {
-        //     //move right
-        //     Space->updateMove(2);
-        // }
+        
         
     }
     void animateStart(int val)

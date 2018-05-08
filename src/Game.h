@@ -7,6 +7,7 @@
 #include "PlayerInfo.h"
 #include "fighter.h"
 #include "Background.h"
+#include <vector>
 
 class Game{
 public:
@@ -23,6 +24,7 @@ public:
     bool turn;
     bool shoot;
 
+    std::vector<fighter*> Ties;
     TexRect* ani1;
     TexRect* ani2;
 
@@ -51,6 +53,9 @@ public:
     void Game_Timer(int);
     void Game_Input(int);
     void moveBackground(int);
+    void DrawTies();
+    void updateTies();
+    void checkCrits(int);
     ~Game(){}
 };
 

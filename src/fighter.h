@@ -31,6 +31,11 @@ public:
         if(!hits)
             draw();
     }
+    void moveenemy()
+    {
+         moveLeft(0.002);
+         draw();
+    }
     void drawBolt()
     {
         // pro->draw();
@@ -40,22 +45,36 @@ public:
     {
         switch (val){
             case(100):{
-                moveLeft(moveSpeed);
+                if(getPose()<= -.9)
+                {
+                    return;
+                }
+                else 
+                {
+                    moveLeft(moveSpeed);
+                }
                 // return true;
                 break;
             }
             case(101):{
-                moveUp(moveSpeed);
+                if(get_yPose()<=.7)
+                {
+                    moveUp(moveSpeed);
+                }
                 // return true;
                 break;
             }
             case(102):{
-                moveRight(moveSpeed);
+                if(getPose() <= .7)
+                    moveRight(moveSpeed);
                 // return true;
                 break;
             }
             case(103):{
-                moveDown(moveSpeed);
+                if(get_yPose() >= -.5)
+                {
+                    moveDown(moveSpeed);
+                }
                 // return true;
                 break;
             }
@@ -120,8 +139,20 @@ public:
             }
         }
     }
-    void shoot();
+    bool myContains(float x, float y)
+    {
+        return contains(x,y);
+    }
     
+    float getY()
+    {
+        return get_yPose();
+    }
+    float getX()
+    {
+        return getPose();
+    }
+
     bool hit();
 
     ~fighter(){

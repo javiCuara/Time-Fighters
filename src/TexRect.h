@@ -55,6 +55,7 @@ public:
     bool movingLeft;
 
     float getPose()const;
+    float get_yPose()const;
     
     void  newW(float);
     void  newH(float);
