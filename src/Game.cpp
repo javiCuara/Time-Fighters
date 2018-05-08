@@ -64,17 +64,25 @@
                 }
             }
         }
+        clock++;
     }
     void Game::DrawTies()
     {
         // we need to generate random starting pose for the tie fighter 
-
-        if(Ties.size() != 10)
+        if(clock % 91 == 0 && Ties.size() != 10)
         {
             #if defined WIN32
                 Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
             #else 
                 Ties.push_back(new fighter("Textures/Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+            #endif
+        }
+        else if( clock % 101 == 0 && Ties.size() != 10)
+        {
+            #if defined WIN32
+                Ties.push_back(new fighter("..\\Textures\\Tie1.png", .79, Fighter->getY(), 0.2, 0.3));
+            #else 
+                Ties.push_back(new fighter("Textures/Tie1.png", .79, -1 * Fighter->getY(), 0.2, 0.3));
             #endif 
         }
         updateTies();
